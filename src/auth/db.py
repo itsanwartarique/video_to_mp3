@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect("auth.db")
+conn = sqlite3.connect("../db/auth.db")
 cursor = conn.cursor()
 
 # create user table
@@ -11,6 +11,7 @@ cursor.execute('''
         password TEXT NOT NULL
     )
 ''')
+
 
 conn.commit()
 conn.close()

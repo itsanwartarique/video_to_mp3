@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Header
 from pydantic import BaseModel
 from dotenv import load_dotenv
-import uvicorn, sqlite3, jwt,os
+import uvicorn, sqlite3, jwt,os,json
 
 load_dotenv()
 app = FastAPI()
@@ -35,7 +35,7 @@ def home():
 def signup(user:User):
     username,password = user.username,user.password
 
-    conn = sqlite3.connect("auth.db")
+    conn = sqlite3.connect("../db/auth.db")
     cursur = conn.cursor()
 
     cursur.execute('''
@@ -53,7 +53,7 @@ def login(data:User):
     username,password = data.username, data.password
     
     # connect with db
-    conn = sqlite3.connect("auth.db")
+    conn = sqlite3.connect("../db/auth.db")
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -72,9 +72,9 @@ def login(data:User):
 
 # validate
 @app.post("/validate")
-def validate(token):
+def validate(Authorization: str = Header(...)):
     try:
-        decoded = jwt.decode(token,SECRET,algorithms=[ALGORITHM])
+        decoded = jwt.decode(Authorization,SECRET,algorithms=[ALGORITHM])
     except:
         return "not authorized", 403
     return decoded,200
